@@ -4,100 +4,137 @@
 
 本项目是一个简陋的 TodoList 应用，前端和后端代码已经给出，数据库已配置好。
 
-**你的任务**：理解现有代码，将各个功能模块对接完成，实现完整的前后端交互。
+**你的任务**：
+1. 补充后端删除功能代码
+2. 前后端对接（编辑、状态切换功能）
+3. 前端 UI 样式优化
 
 ---
 
 ## 题目要求
 
-### 第一部分：后端理解与数据对接
+### 第一部分：后端删除功能（补充代码）
 
-1. **理解后端 API**
-   - 查看后端代码，理解 RESTful API 设计
-   - 确认以下接口的请求/响应格式：
-     - `GET /api/todos` - 获取所有任务
-     - `POST /api/todos` - 创建任务
-     - `PUT /api/todos/{id}` - 更新任务
-     - `DELETE /api/todos/{id}` - 删除任务
+需要补充以下位置的删除功能代码：
 
-2. **数据库操作**
-   - 理解 SQLite 数据库的表结构
-   - 理解原生 SQL 的增删改查操作
+**1. Node.js 后端** (`backend/nodejs-todo/src/server.js`)
+- 位置：删除接口 `/api/todos/:id` 的实现
+- 参考代码示例：
+```javascript
+// 先查询是否存在
 
-### 第二部分：前端功能实现
+// 执行删除
 
-1. **添加任务功能**
-   - 输入框输入任务内容
-   - 点击"添加"按钮或按回车提交
-   - 调用 POST API 创建任务
-   - 创建成功后刷新列表
-
-2. **完成任务功能**
-   - 点击 checkbox 或"完成"按钮
-   - 调用 PUT API 更新任务的 completed 状态
-   - 已完成的任务显示删除线效果
-
-3. **编辑任务功能**
-   - 点击"编辑"按钮
-   - 弹出输入框修改任务内容
-   - 调用 PUT API 更新任务标题
-
-4. **删除任务功能**
-   - 点击"删除"按钮
-   - 调用 DELETE API 删除任务
-   - 删除后刷新列表
-
-### 第三部分：UI 优化（选做）
-
-当前界面比较简陋，可以自行优化：
-- 添加更好的样式和布局
-- 添加任务分类或筛选功能
-- 添加动画效果
-
----
-
-## API 接口详情
-
-### 请求格式
-
-**创建任务 POST /api/todos**
-```json
-请求体: { "title": "任务内容" }
-响应: { "id": 1, "title": "任务内容", "completed": false, "created_at": "2024-01-01T00:00:00" }
 ```
 
-**更新任务 PUT /api/todos/{id}**
-```json
-请求体: { "title": "新内容" } 或 { "completed": true }
-响应: { "id": 1, "title": "新内容", "completed": true, "created_at": "2024-01-01T00:00:00" }
-```
+**2. FastAPI 后端** (`backend/fastapi-todo/app/main.py`)
+- 位置：删除接口 `/api/todos/{todo_id}` 的 `delete_todo` 函数实现
 
-**删除任务 DELETE /api/todos/{id}**
-```json
-响应: { "message": "Todo deleted" }
+
 ```
 
 ---
 
-## 技术栈参考
+### 第二部分：前后端功能对接
 
-| 层级 | 技术 | 说明 |
-|------|------|------|
-| 前端框架 | Vue 3 / React 18 | 可选 |
-| HTTP 客户端 | Axios | 已配置 |
-| 后端框架 | Node.js + Express / FastAPI | 可选 |
-| 数据库 | SQLite + 原生 SQL | 已配置 |
+#### 1. 状态切换功能（checkbox）
+
+**Vue 前端** (`frontend/vue-todo/src/App.vue`)
+- 位置：`toggleComplete` 方法
+```javascript
+async toggleComplete(todo) {
+  //  补充代码 -------------------------
+  // 调用 PUT /api/todos/{id} 接口
+  // 传入 { completed: !todo.completed }
+}
+```
+
+**React 前端** (`frontend/react-todo/src/App.jsx`)
+- 位置：`toggleComplete` 函数
+```javascript
+const toggleComplete = async (todo) => {
+  // 补充代码 -------------------------
+  // 调用 PUT /api/todos/{id} 接口
+  // 传入 { completed: !todo.completed }
+}
+```
+
+#### 2. 编辑功能
+
+**Vue 前端** (`frontend/vue-todo/src/App.vue`)
+- 位置：`editTodo` 方法
+```javascript
+async editTodo(todo) {
+  const newTitle = prompt('修改任务:', todo.title)
+  //  补充代码 -------------------------
+  // 如果用户确认了新标题，调用 PUT /api/todos/{id} 接口
+  // 传入 { title: newTitle }
+}
+```
+
+**React 前端** (`frontend/react-todo/src/App.jsx`)
+- 位置：`editTodo` 函数
+```javascript
+const editTodo = async (todo) => {
+  const newTitle = prompt('修改任务:', todo.title)
+  // 补充代码 -------------------------
+  // 如果用户确认了新标题，调用 PUT /api/todos/{id} 接口
+  // 传入 { title: newTitle }
+}
+```
+
+---
+
+### 第三部分：UI 样式优化
+
+当前界面比较简陋，可以进行以下优化：
+- 调整表格样式（边框、间距、颜色）
+- 优化按钮样式
+- 调整布局和间距
+- 添加hover效果
+- 完善空状态显示
+
+---
+
+## API 接口参考
+
+| 方法 | 路径 | 描述 | 请求体 |
+|------|------|------|--------|
+| GET | /api/todos | 获取所有任务 | - |
+| POST | /api/todos | 创建任务 | `{ "title": "内容" }` |
+| PUT | /api/todos/:id | 更新任务 | `{ "title": "新内容" }` 或 `{ "completed": true }` |
+| DELETE | /api/todos/:id | 删除任务 | - |
+
+响应格式：
+```json
+{
+  "id": 1,
+  "title": "任务内容",
+  "completed": false,
+  "created_at": "2026-05-06T00:00:00"
+}
+```
+
+---
+
+## 技术栈
+
+| 层级 | 技术 |
+|------|------|
+| 前端 | Vue 3 / React 18 + Axios + Vite |
+| 后端 | Node.js + Express / FastAPI (Python) |
+| 数据库 | SQLite + 原生 SQL |
 
 ---
 
 ## 启动方式
 
-### 启动后端（选择其中一个）
+### 后端（选择一个）
 
 **Node.js:**
 ```bash
 cd backend/nodejs-todo
-npm install  # 如已安装可跳过
+npm install
 npm run dev
 ```
 
@@ -105,31 +142,24 @@ npm run dev
 ```bash
 cd backend/fastapi-todo
 pip install -r requirements.txt
-python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+python -m uvicorn app.main:app --reload --port 8000
 ```
 
-### 启动前端（选择其中一个）
+### 前端（选择一个）
 
 **Vue:**
 ```bash
 cd frontend/vue-todo
-npm install  # 如已安装可跳过
+npm install
 npm run dev
 ```
 
 **React:**
 ```bash
 cd frontend/react-todo
-npm install  # 如已安装可跳过
+npm install
 npm run dev
 ```
-
-### 访问地址
-
-- Vue 前端: http://localhost:3000
-- React 前端: http://localhost:3001
-- Node.js 后端 API: http://localhost:8000/api/todos
-- FastAPI 后端 API: http://localhost:8000/api/todos
 
 ---
 
@@ -137,17 +167,22 @@ npm run dev
 
 | 项目 | 分值 | 说明 |
 |------|------|------|
-| 后端理解 | 20% | 理解 API 设计和数据库操作 |
-| 添加功能 | 20% | 正确调用 POST 接口 |
-| 完成功能 | 20% | 正确调用 PUT 接口完成状态 |
-| 编辑功能 | 20% | 正确调用 PUT 接口修改标题 |
-| 删除功能 | 20% | 正确调用 DELETE 接口 |
+| 后端删除功能 | 30% | 补充 DELETE 接口代码 |
+| 状态切换对接 | 25% | 完成 checkbox 切换功能 |
+| 编辑功能对接 | 25% | 完成编辑并保存功能 |
+| UI 样式优化 | 20% | 调整界面美观度 |
 
 ---
 
-## 注意事项
+## 数据库表结构
 
-1. 两个后端端口都是 8000，**不可同时启动**
-2. 两个前端端口分别是 3000 和 3001，可以同时启动
-3. 前端代码中的 API 地址已配置为 `http://localhost:8000/api/todos`
-4. 数据库文件为 `todo.db`，SQLite 可用 DB Browser 查看
+```
+表名: todos
+
+| 字段       | 类型     | 说明                    |
+|------------|----------|-------------------------|
+| id         | INTEGER  | 主键，自增              |
+| title      | TEXT     | 任务标题，不能为空      |
+| completed  | INTEGER  | 完成状态 (0/1)，默认 0  |
+| created_at | TEXT     | 创建时间，默认当前时间  |
+```
